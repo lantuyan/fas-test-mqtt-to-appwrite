@@ -1,4 +1,4 @@
-import { Client, Databases } from 'node-appwrite';
+import { Client, Databases, ID} from 'node-appwrite';
 
 import mqtt from "mqtt"
 // import sdk, { AppwriteException } from 'node-appwrite';
@@ -20,12 +20,12 @@ const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
     let topicName = `application/${mqtt_applicationID}/device/+/event/up`
 
     client_mqtt.on("connect", function () {
-        log("client connect successfully")
+        logAppwrite("client connect successfully")
         client_mqtt.subscribe(topicName, (err, granted) => {
             if (err) {
-                log(err, 'err');
+                logAppwrite(err, 'err');
             }
-            log(granted, 'granted')
+            logAppwrite(granted, 'granted')
         })
     })
 
@@ -48,7 +48,7 @@ const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
                   status: "on"
                 }
               );
-              log('Document created successfully');
+              logAppwrite('Document created successfully');
             } catch (error) {
               if (error instanceof AppwriteException && error.code === 409) {
                 // Document with the requested ID already exists, update the existing document
@@ -66,7 +66,7 @@ const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
                     status: "on"
                   }
                 );
-                log('Document updated successfully');
+                logAppwrite('Document updated successfully');
               } else {
                 throw error;
               }
@@ -81,10 +81,24 @@ const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
     })
 
     client_mqtt.on("error", function (error) {
-        log('err: ', error)
+        logAppwrite('err: ', error)
     })
 
     client_mqtt.on("close", function () {
-        log("closed")
+        logAppwrite("closed")
     })
 // };
+
+const logCollectionId = "66d18cd100349aec7523";
+// Write a function for input is String of Log, and output is a new document in Log Collection
+async function logAppwrite(log) {
+  try {
+    await databases.createDocument(buildingDatabaseID, logCollectionId, ID.unique(), {
+      log: log,
+      time: new Date().toISOString(),
+      type: "MQTT_AppWrite"
+    });
+  } catch (error) {
+    console.error('Error logging:', error);
+  }
+}
