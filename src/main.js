@@ -4,7 +4,7 @@ import mqtt from "mqtt"
 // import sdk, { AppwriteException } from 'node-appwrite';
 
 let client = new Client();
-client.setEndpoint("https://cloud.appwrite.io/v1")
+client.setEndpoint(process.env.ENDPOINT_URL)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(process.env.APPWRITE_API_KEY)
 
@@ -39,12 +39,13 @@ export default async ({ req, res, log, error }) => {
                 sensorCollectionID,
                 temp.devEUI,
                 {
-                  deviceName: temp.deviceName,
-                  devEUI: temp.devEUI,
-                  Battery: temp.object.Battery,
-                  Smoke: temp.object.Smoke,
-                  Type: temp.object.Type,
-                  time: temp.rxInfo[0].time,
+                  name: temp.deviceName.split('_')[0],
+                  time: temp.rxInfo[1].time,
+                  timeTurnOn: "",
+                  battery: temp.object.battery,
+                  type : temp.deviceProfileName,
+                  value: temp.object.temperature ?? 1,
+                  status: "on"
                 }
               );
               console.log('Document created successfully');
@@ -56,12 +57,13 @@ export default async ({ req, res, log, error }) => {
                   sensorCollectionID,
                   temp.devEUI,
                   {
-                    deviceName: temp.deviceName,
-                    devEUI: temp.devEUI,
-                    Battery: temp.object.Battery,
-                    Smoke: temp.object.Smoke,
-                    Type: temp.object.Type,
-                    time: temp.rxInfo[0].time,
+                    name: temp.deviceName.split('_')[0],
+                    time: temp.rxInfo[1].time,
+                    timeTurnOn: "",
+                    battery: temp.object.battery,
+                    type : temp.deviceProfileName,
+                    value: temp.object.temperature ?? 2,
+                    status: "on"
                   }
                 );
                 console.log('Document updated successfully');
