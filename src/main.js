@@ -20,12 +20,15 @@ export default async ({ req, res, log, error }) => {
     let topicName = `application/${mqtt_applicationID}/device/+/event/up`
 
     client_mqtt.on("connect", function () {
+        log("client connect successfully")
         logAppwrite("client connect successfully")
         client_mqtt.subscribe(topicName, (err, granted) => {
             if (err) {
-                logAppwrite(err, 'err');
+                log(err, 'err');
+                logAppwrite("err")
             }
-            logAppwrite(granted, 'granted')
+            log(granted, 'granted')
+            logAppwrite("granted")
         })
     })
 
@@ -48,7 +51,8 @@ export default async ({ req, res, log, error }) => {
                   status: "on"
                 }
               );
-              logAppwrite('Document created successfully');
+              log('Document created successfully');
+              logAppwrite("Document created successfully")
             } catch (error) {
               if (error instanceof AppwriteException && error.code === 409) {
                 // Document with the requested ID already exists, update the existing document
@@ -66,7 +70,8 @@ export default async ({ req, res, log, error }) => {
                     status: "on"
                   }
                 );
-                logAppwrite('Document updated successfully');
+                log('Document updated successfully');
+                logAppwrite("Document updated successfully")
               } else {
                 throw error;
               }
@@ -81,10 +86,12 @@ export default async ({ req, res, log, error }) => {
     })
 
     client_mqtt.on("error", function (error) {
-        logAppwrite('err: ', error)
+        log('err: ', error)
+        logAppwrite(`rr: ${error}`)
     })
 
     client_mqtt.on("close", function () {
+        log("closed")
         logAppwrite("closed")
     })
 
