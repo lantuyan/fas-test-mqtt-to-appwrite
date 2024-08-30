@@ -14,7 +14,7 @@ const sensorCollectionID = process.env.SENSOR_COLLECTION_ID;
 const mqtt_url =  process.env.MQTT_URL;
 const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
 
-// export default async ({ req, res, log, error }) => {
+export default async ({ req, res, log, error }) => {
 
     var client_mqtt = mqtt.connect(mqtt_url)
     let topicName = `application/${mqtt_applicationID}/device/+/event/up`
@@ -87,7 +87,12 @@ const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
     client_mqtt.on("close", function () {
         logAppwrite("closed")
     })
-// };
+
+    return res.json({
+      message:
+        'realtime read senor value',
+    });
+};
 
 const logCollectionId = "66d18cd100349aec7523";
 // Write a function for input is String of Log, and output is a new document in Log Collection
