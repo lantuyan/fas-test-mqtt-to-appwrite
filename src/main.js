@@ -14,18 +14,18 @@ const sensorCollectionID = process.env.SENSOR_COLLECTION_ID;
 const mqtt_url =  process.env.MQTT_URL;
 const mqtt_applicationID = process.env.MQTT_APPLICATION_ID;
 
-export default async ({ req, res, log, error }) => {
+// export default async ({ req, res, log, error }) => {
 
     var client_mqtt = mqtt.connect(mqtt_url)
     let topicName = `application/${mqtt_applicationID}/device/+/event/up`
 
     client_mqtt.on("connect", function () {
-        console.log("client connect successfully")
+        log("client connect successfully")
         client_mqtt.subscribe(topicName, (err, granted) => {
             if (err) {
-                console.log(err, 'err');
+                log(err, 'err');
             }
-            console.log(granted, 'granted')
+            log(granted, 'granted')
         })
     })
 
@@ -48,7 +48,7 @@ export default async ({ req, res, log, error }) => {
                   status: "on"
                 }
               );
-              console.log('Document created successfully');
+              log('Document created successfully');
             } catch (error) {
               if (error instanceof AppwriteException && error.code === 409) {
                 // Document with the requested ID already exists, update the existing document
@@ -66,13 +66,13 @@ export default async ({ req, res, log, error }) => {
                     status: "on"
                   }
                 );
-                console.log('Document updated successfully');
+                log('Document updated successfully');
               } else {
                 throw error;
               }
             }
           } catch (error) {
-            console.error('Error processing message:', error);
+            error('Error processing message:', error);
           }
     })
 
@@ -81,10 +81,10 @@ export default async ({ req, res, log, error }) => {
     })
 
     client_mqtt.on("error", function (error) {
-        console.log('err: ', error)
+        log('err: ', error)
     })
 
     client_mqtt.on("close", function () {
-        console.log("closed")
+        log("closed")
     })
-};
+// };
